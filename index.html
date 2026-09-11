@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ahmed Faraz Malik | AI Engineer</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ahmed Faraz Malik — Portfolio</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <section class="hero">
 
-    <div class="hero-content">
+  <!-- Particle background canvas -->
+  <canvas id="particle-canvas"></canvas>
 
-        <p class="hero-greeting">Hi, I'm</p>
+  <section class="hero" id="hero">
+    <div class="hero__inner">
 
-        <h1>Ahmed Faraz Malik</h1>
+      <!-- Left column: text -->
+      <div class="hero__content">
+        <span class="hero__eyebrow">Available for work</span>
 
-        <h2>AI Engineer</h2>
+        <h1 class="hero__title">
+          Hi, I'm <span id="typed-text" class="hero__accent"></span><span class="hero__cursor">|</span>
+        </h1>
 
-        <p class="hero-description">
-            I build AI-powered applications, RAG systems, and modern web solutions.
+        <p class="hero__desc">
+          AI Engineer specializing in LLM applications, RAG systems,
+          computer vision, and conversational AI. Building intelligent
+          systems that solve real-world problems.
         </p>
 
-        <div class="hero-buttons">
-            <a href="#" class="btn">View My Work</a>
-            <a href="#" class="btn">Contact Me</a>
+        <div class="hero__actions">
+          <a href="#work" class="btn btn--primary">
+            View my work
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </a>
+          <a href="resume.pdf" class="btn btn--secondary" download>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 21h14"></path></svg>
+            Download Resume
+          </a>
         </div>
 
-    </div>
+        <div class="hero__stats">
+          <div class="stat">
+            <span class="stat__num">17+</span>
+            <span class="stat__label">Projects Completed</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">1+</span>
+            <span class="stat__label">Years of Experience</span>
+          </div>
+        </div>
+      </div>
 
-    <div class="hero-image">
-        <img src="assets/images/profile.jpg" alt="Ahmed Faraz Malik">
-    </div>
+      <!-- Right column: image -->
+      <div class="hero__image-wrap">
+        <div class="hero__image-glow"></div>
+        <div class="hero__image-circle">
+          <img src="Assets/images/profile.jfif" alt="Ahmed Faraz Malik" class="hero__image" />
+        </div>
+      </div>
 
-</section>
+    </div>
+  </section>
+
+  <script src="particles.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
