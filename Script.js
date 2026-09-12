@@ -1,12 +1,12 @@
 /**
- * script.js
+ * Script.js
  * Smooth typing / deleting effect that cycles through role titles.
  */
 
 (function () {
   'use strict';
 
-  const ROLES = ['AI Engineer', 'Python Developer', 'Software Engineer'];
+  const ROLES = ['AI Engineer', 'Python Developer', 'Software Engineer', 'Full-Stack Developer'];
 
   const el = document.getElementById('typed-text');
 
