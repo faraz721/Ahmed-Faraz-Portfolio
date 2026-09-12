@@ -28,6 +28,32 @@
     }
   }
 
+  /* ── Scroll-reveal (fade-in) ──────────────────────────────
+   * Subtle fade/slide-in for section headers, cards, and the
+   * about/contact panels as they enter the viewport. Reveals
+   * once per element (no repeated fade-out/fade-in on re-scroll)
+   * to avoid flicker and keep it performant.
+   */
+  const revealEls = document.querySelectorAll('.reveal');
+
+  if (revealEls.length) {
+    if ('IntersectionObserver' in window) {
+      const revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function (el) { revealObserver.observe(el); });
+    } else {
+      // No IntersectionObserver support — just show everything.
+      revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+    }
+  }
+
   /* ── Contact form (EmailJS) ───────────────────────────────
    * EmailJS lets a static, backend-free site like GitHub Pages send real
    * email from a form. Create a free account at emailjs.com, then replace

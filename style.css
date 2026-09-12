@@ -47,6 +47,19 @@ html[data-theme='dark'] {
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Visually hidden but still available to screen readers / assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 html, body {
   width: 100%;
   height: 100%;
@@ -382,17 +395,6 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   color: var(--accent);
 }
 
-.hero__cursor {
-  color: var(--accent);
-  font-weight: 400;
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
 .hero__desc {
   max-width: 46ch;
   color: var(--ink-soft);
@@ -499,6 +501,19 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* ── Scroll reveal ─────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ── Section shells ────────────────────────────────────── */
@@ -849,32 +864,26 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
 .contact__links {
   display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .contact__link {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
+  justify-content: center;
   text-decoration: none;
-  color: var(--ink);
-  font-size: 0.92rem;
-  font-weight: 600;
-  transition: border-color 0.18s ease, transform 0.18s ease;
+  transition: transform 0.18s ease;
 }
 
 .contact__link:hover {
-  border-color: var(--accent);
-  transform: translateX(3px);
+  transform: translateY(-3px);
 }
 
 .contact__link-icon {
-  width: 38px;
-  height: 38px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -882,6 +891,12 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   background: var(--accent-soft);
   color: var(--accent);
   flex-shrink: 0;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.contact__link:hover .contact__link-icon {
+  background: var(--accent);
+  color: var(--bg);
 }
 
 .contact__form {
@@ -994,7 +1009,19 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   }
 
   .contact__links {
-    align-items: stretch;
+    justify-content: center;
+  }
+
+  /* Mobile contact order: form first, then contact buttons/links */
+  .contact__inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .contact__form {
+    order: 1;
+  }
+  .contact__info {
+    order: 2;
   }
 
   .hero__inner {
@@ -1039,9 +1066,34 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   .project-card { flex: 1 1 100%; max-width: 100%; }
 }
 
+/* ── Desktop breathing room ────────────────────────────────
+ * Guarantees a small minimum gutter from the screen edges on
+ * larger viewports without shrinking the existing 6vw spacing
+ * where it's already comfortable. */
+@media (min-width: 901px) {
+  .navbar__inner,
+  .hero,
+  .services,
+  .projects,
+  .about,
+  .skills,
+  .contact {
+    padding-left: max(6vw, 2rem);
+    padding-right: max(6vw, 2rem);
+  }
+}
+
+/* ── Mobile hero video spacing ─────────────────────────────
+ * Keeps the profile video clear of the fixed navbar (68px tall
+ * on mobile) instead of starting flush behind it. */
+@media (max-width: 900px) {
+  .hero {
+    padding-top: calc(68px + 2rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero__cursor { animation: none; }
   .hero__eyebrow::before { animation: none; }
   .btn,
   .theme-toggle,
@@ -1055,4 +1107,9 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
     transition: none;
   }
   .skills__grid.is-visible .skill-item__fill { width: var(--fill); }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
