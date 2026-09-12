@@ -72,7 +72,7 @@ html, body {
 html {
   scroll-behavior: smooth;
   /* Keeps anchored sections clear of the fixed navbar */
-  scroll-padding-top: 76px;
+  scroll-padding-top: 68px;
 }
 
 body {
@@ -85,13 +85,16 @@ img, video { max-width: 100%; }
 .navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 1rem;
+  right: 1rem;
   z-index: 50;
   background: var(--navbar-bg);
   backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid var(--navbar-border);
+  border-left: 1px solid var(--navbar-border);
+  border-right: 1px solid var(--navbar-border);
+  border-radius: 0 0 18px 18px;
   transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
@@ -104,8 +107,8 @@ img, video { max-width: 100%; }
 .navbar__inner {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 6vw;
-  height: 76px;
+  padding: 0 5vw;
+  height: 68px;
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
@@ -155,6 +158,33 @@ img, video { max-width: 100%; }
 .navbar__link--cta:hover {
   color: var(--bg);
   opacity: 0.9;
+}
+
+/* Animated pill background behind each nav link on hover (desktop only —
+   mobile menu items use their own stacked/bordered hover treatment). */
+@media (min-width: 901px) {
+  .navbar__link:not(.navbar__link--cta) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .navbar__link:not(.navbar__link--cta)::before {
+    content: '';
+    position: absolute;
+    inset: -0.5rem -0.85rem;
+    background: var(--accent-soft);
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    transform: scale(0.88);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .navbar__link:not(.navbar__link--cta):hover::before {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Desktop CTA lives in the actions cluster; the mobile copy lives inside the menu */
@@ -251,10 +281,15 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 }
 
 @media (max-width: 900px) {
-  html { scroll-padding-top: 68px; }
+  html { scroll-padding-top: 60px; }
+
+  .navbar {
+    left: 0.6rem;
+    right: 0.6rem;
+  }
 
   .navbar__inner {
-    height: 68px;
+    height: 60px;
     grid-template-columns: auto auto auto;
   }
 
@@ -274,7 +309,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
   .navbar__menu {
     position: absolute;
-    top: 68px;
+    top: 60px;
     left: 0;
     right: 0;
     flex-direction: column;
@@ -501,6 +536,23 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* Thin animated ring around the profile circle — a gentle,
+   professional pulse in the existing accent color. */
+.hero__image-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: hero-ring-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes hero-ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.055); opacity: 0.15; }
 }
 
 /* ── Scroll reveal ─────────────────────────────────────── */
@@ -964,6 +1016,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
 .contact__status[data-state='success'] { color: #2e9e5b; }
 .contact__status[data-state='error'] { color: #e0503a; }
+.contact__status[data-state='loading'] { color: var(--ink-soft); }
 
 @media (max-width: 900px) {
   .contact__inner {
@@ -1069,9 +1122,9 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 /* ── Desktop breathing room ────────────────────────────────
  * Guarantees a small minimum gutter from the screen edges on
  * larger viewports without shrinking the existing 6vw spacing
- * where it's already comfortable. */
+ * where it's already comfortable. (Navbar has its own compact
+ * edge spacing — see the .navbar rule.) */
 @media (min-width: 901px) {
-  .navbar__inner,
   .hero,
   .services,
   .projects,
@@ -1088,7 +1141,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
  * on mobile) instead of starting flush behind it. */
 @media (max-width: 900px) {
   .hero {
-    padding-top: calc(68px + 2rem);
+    padding-top: calc(60px + 2rem);
   }
 }
 
@@ -1103,7 +1156,8 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   .navbar__toggle-bar,
   .service-card,
   .project-card,
-  .contact__link {
+  .contact__link,
+  .navbar__link::before {
     transition: none;
   }
   .skills__grid.is-visible .skill-item__fill { width: var(--fill); }
@@ -1111,5 +1165,8 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .hero__image-ring {
+    animation: none;
   }
 }

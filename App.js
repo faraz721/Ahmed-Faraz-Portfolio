@@ -91,6 +91,14 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
+      // Field validation — required + email-format checks (via the
+      // native HTML attributes on each input) surfaced with the
+      // browser's built-in validation UI.
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
       const isConfigured = EMAILJS_PUBLIC_KEY.indexOf('YOUR_') !== 0
         && EMAILJS_SERVICE_ID.indexOf('YOUR_') !== 0
         && EMAILJS_TEMPLATE_ID.indexOf('YOUR_') !== 0;
@@ -101,8 +109,13 @@
       }
 
       const submitBtn = form.querySelector('.contact__submit');
-      if (submitBtn) submitBtn.disabled = true;
-      setStatus('Sending...', '');
+      const submitLabel = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+        submitBtn.textContent = 'Sending\u2026';
+      }
+      setStatus('Sending\u2026', 'loading');
 
       window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
         .then(function () {
@@ -113,7 +126,11 @@
           setStatus('Something went wrong sending that. Please try again or email me directly.', 'error');
         })
         .finally(function () {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.removeAttribute('aria-busy');
+            submitBtn.innerHTML = submitLabel;
+          }
         });
     });
   }
