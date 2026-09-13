@@ -6,7 +6,7 @@
   --ink-soft: #6b7078;
   --accent: #ff6b35;
   --accent-soft: #ffe4d6;
-  --dot-color: rgba(20, 22, 26, 0.16);
+  --dot-color: rgba(20, 22, 26, 0.28);
 
   --card-bg: #ffffff;
   --border-color: #ececef;
@@ -31,7 +31,7 @@ html[data-theme='dark'] {
   --ink-soft: #9a9ea7;
   --accent: #ff7a47;
   --accent-soft: rgba(255, 122, 71, 0.16);
-  --dot-color: rgba(255, 255, 255, 0.18);
+  --dot-color: rgba(255, 255, 255, 0.30);
 
   --card-bg: #16181d;
   --border-color: #26282f;
