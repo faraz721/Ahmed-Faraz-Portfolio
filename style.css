@@ -733,6 +733,43 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   gap: 1rem;
 }
 
+/* ── Project card: technology badges ──────────────────────
+   Editable per-card in index.html — each <span class="project-card__tech-badge">
+   is just plain text, so swap the names to match your stack. */
+.project-card__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.project-card__tech-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.75rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── Project card: Live Demo / GitHub buttons ─────────────
+   The href on each of these anchors in index.html is where you plug in
+   your real links — see the HTML comments right above each <a> tag. */
+.project-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0.3rem;
+}
+
+.project-card__btn {
+  padding: 0.6rem 1.1rem;
+  font-size: 0.82rem;
+}
+
 @media (max-width: 700px) {
   .projects__grid {
     grid-template-columns: 1fr;
@@ -918,6 +955,18 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 }
 
 /* ── Contact ───────────────────────────────────────────── */
+/* Fixed dark "spotlight" card — intentionally dark in both light and
+   dark site themes, to match the reference design exactly. Colors below
+   are hardcoded (not theme tokens) for that reason. Responsive behavior
+   (grid → stacked columns, full-width button, etc.) is unchanged from
+   before — only visual styling was touched. */
+.contact__card {
+  background: #1a1c1e;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  padding: clamp(1.8rem, 4vw, 3.2rem);
+}
+
 .contact__inner {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
@@ -933,16 +982,31 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 .contact__form  { grid-area: form; }
 .contact__links { grid-area: links; }
 
+.contact__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  margin-bottom: 0.9rem;
+  background: rgba(255, 87, 34, 0.12);
+  color: #ff5722;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .contact__info-title {
   font-size: clamp(1.6rem, 3.4vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 0.8rem;
   text-align: left;
+  color: #ffffff;
 }
 
 .contact__info-desc {
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 0.98rem;
   line-height: 1.65;
   max-width: 42ch;
@@ -951,34 +1015,40 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
 .contact__links {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
 }
 
 .contact__link {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.9rem;
   text-decoration: none;
   transition: transform 0.18s ease;
 }
 
 .contact__link:hover {
-  transform: translateY(-3px);
+  transform: translateX(3px);
 }
 
 .contact__link-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
   flex-shrink: 0;
   transition: background 0.18s ease, color 0.18s ease;
+}
+
+.contact__link-text {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.92rem;
+  font-weight: 500;
 }
 
 /* Used for icons supplied as plain PNG/JPG files (instead of inline SVG) —
@@ -986,8 +1056,8 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
    icons exactly, in both light and dark theme. */
 .icon-mask {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   background-color: currentColor;
   -webkit-mask-image: var(--icon-img);
   mask-image: var(--icon-img);
@@ -1002,18 +1072,14 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 }
 
 .contact__link:hover .contact__link-icon {
-  background: var(--accent);
-  color: var(--bg);
+  background: #ff5722;
+  color: #ffffff;
 }
 
 .contact__form {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: clamp(1.6rem, 3vw, 2.2rem);
+  gap: 1.3rem;
 }
 
 .form-row {
@@ -1025,48 +1091,44 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.5rem;
 }
 
 .form-field label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--ink-soft);
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.01em;
 }
 
-html[data-theme='dark'] .form-field label {
-  color: #e5e7eb;
+.form-field__required {
+  color: #ff7a47;
 }
 
 .form-field input,
 .form-field textarea {
   width: 100%;
-  padding: 0.8rem 0.95rem;
+  padding: 0.9rem 1rem;
   border-radius: 12px;
-  border: 1.5px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--ink);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
   font-family: var(--font-main);
   font-size: 0.94rem;
-  transition: border-color 0.18s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-  color: var(--ink-soft);
-  opacity: 0.8;
-}
-
-html[data-theme='dark'] .form-field input::placeholder,
-html[data-theme='dark'] .form-field textarea::placeholder {
-  color: #9aa0ac;
+  color: rgba(255, 255, 255, 0.4);
   opacity: 1;
 }
 
 .form-field input:focus,
 .form-field textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: #ff7a47;
+  box-shadow: 0 0 0 3px rgba(255, 122, 71, 0.16);
 }
 
 .form-field textarea {
@@ -1075,19 +1137,32 @@ html[data-theme='dark'] .form-field textarea::placeholder {
 }
 
 .contact__submit {
-  align-self: flex-start;
+  align-self: stretch;
+  width: 100%;
+  justify-content: center;
   margin-top: 0.2rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background: #ff5e28;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.contact__submit:hover {
+  background: #ff7442;
+  box-shadow: 0 10px 24px rgba(255, 94, 40, 0.35);
 }
 
 .contact__status {
   font-size: 0.86rem;
   font-weight: 600;
   min-height: 1.2em;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.contact__status[data-state='success'] { color: #2e9e5b; }
-.contact__status[data-state='error'] { color: #e0503a; }
-.contact__status[data-state='loading'] { color: var(--ink-soft); }
+.contact__status[data-state='success'] { color: #4bc27b; }
+.contact__status[data-state='error'] { color: #ff6a52; }
+.contact__status[data-state='loading'] { color: rgba(255, 255, 255, 0.6); }
 
 @media (max-width: 900px) {
   .contact__inner {
@@ -1158,12 +1233,17 @@ html[data-theme='dark'] .form-field textarea::placeholder {
     align-items: center;
   }
 
+  .project-card__tech,
+  .project-card__links {
+    justify-content: center;
+  }
+
   .skill-item__row {
     text-align: left;
   }
 
   .contact__links {
-    justify-content: center;
+    align-items: center;
   }
 
   .hero__inner {
