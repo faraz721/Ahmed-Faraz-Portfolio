@@ -81,6 +81,11 @@ body {
 
 img, video { max-width: 100%; }
 
+/* Every icon on this site is an inline <svg>, never an external file or
+   icon font — this keeps them rendering as real vector graphics instead
+   of raw markup/text under any circumstance. */
+svg { display: block; max-width: 100%; }
+
 /* ── Navbar ────────────────────────────────────────────── */
 .navbar {
   position: fixed;
@@ -895,15 +900,24 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 .contact__inner {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-areas:
+    "intro form"
+    "links form";
+  column-gap: clamp(2rem, 5vw, 4rem);
+  row-gap: 2rem;
   align-items: flex-start;
 }
+
+.contact__intro { grid-area: intro; }
+.contact__form  { grid-area: form; }
+.contact__links { grid-area: links; }
 
 .contact__info-title {
   font-size: clamp(1.6rem, 3.4vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 0.8rem;
+  text-align: left;
 }
 
 .contact__info-desc {
@@ -911,7 +925,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   font-size: 0.98rem;
   line-height: 1.65;
   max-width: 42ch;
-  margin-bottom: 2rem;
+  text-align: left;
 }
 
 .contact__links {
@@ -944,6 +958,26 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   color: var(--accent);
   flex-shrink: 0;
   transition: background 0.18s ease, color 0.18s ease;
+}
+
+/* Used for icons supplied as plain PNG/JPG files (instead of inline SVG) —
+   tints the image with the current accent color so it matches the other
+   icons exactly, in both light and dark theme. */
+.icon-mask {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask-image: var(--icon-img);
+  mask-image: var(--icon-img);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  /* Thickens thin PNG line-icons slightly, similar to a "faux bold" trick */
+  filter: drop-shadow(0 0 0.4px currentColor) drop-shadow(0 0 0.4px currentColor);
 }
 
 .contact__link:hover .contact__link-icon {
@@ -979,6 +1013,10 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   color: var(--ink-soft);
 }
 
+html[data-theme='dark'] .form-field label {
+  color: #e5e7eb;
+}
+
 .form-field input,
 .form-field textarea {
   width: 100%;
@@ -990,6 +1028,18 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   font-family: var(--font-main);
   font-size: 0.94rem;
   transition: border-color 0.18s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+
+html[data-theme='dark'] .form-field input::placeholder,
+html[data-theme='dark'] .form-field textarea::placeholder {
+  color: #9aa0ac;
+  opacity: 1;
 }
 
 .form-field input:focus,
@@ -1021,6 +1071,25 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 @media (max-width: 900px) {
   .contact__inner {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "intro"
+      "form"
+      "links";
+  }
+
+  /* Center the form card with balanced side gutters instead of letting
+     it stretch edge-to-edge on wider mobile/tablet widths. */
+  .contact__form {
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contact__submit {
+    align-self: stretch;
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -1045,6 +1114,17 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
     margin-right: auto;
   }
 
+  .contact__info-title {
+    text-align: center;
+  }
+
+  .contact__info-desc {
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
   .service-card,
   .project-card {
     align-items: center;
@@ -1063,18 +1143,6 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
   .contact__links {
     justify-content: center;
-  }
-
-  /* Mobile contact order: form first, then contact buttons/links */
-  .contact__inner {
-    display: flex;
-    flex-direction: column;
-  }
-  .contact__form {
-    order: 1;
-  }
-  .contact__info {
-    order: 2;
   }
 
   .hero__inner {
