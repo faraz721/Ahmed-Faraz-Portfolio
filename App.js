@@ -96,7 +96,7 @@
           video.pause();
         }
       });
-    }, { threshold: 0.35, rootMargin: '200px 0px' });
+    }, { threshold: 0.35, rootMargin: '600px 0px' });
 
     projectVideos.forEach(function (v) { videoObserver.observe(v); });
   } else {
