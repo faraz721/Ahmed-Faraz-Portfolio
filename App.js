@@ -28,6 +28,84 @@
     }
   }
 
+  /* ── Project videos ───────────────────────────────────────
+   * - Videos load only when a card is near the viewport (fast first load)
+   * - Autoplay (muted + looped) while visible, pause when scrolled away
+   * - Small button lets the visitor pause/play; a manual pause is respected
+   * - Respects "reduce motion": shows the poster, visitor can press play
+   */
+  const projectVideos = document.querySelectorAll('.project-card__video');
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function loadVideo (video) {
+    if (video.dataset.loaded) return;
+    video.querySelectorAll('source[data-src]').forEach(function (s) {
+      s.src = s.getAttribute('data-src');
+    });
+    video.dataset.loaded = 'true';
+    video.load();
+  }
+
+  function setToggleState (video, playing) {
+    const btn = video.parentElement.querySelector('.project-card__toggle');
+    if (!btn) return;
+    btn.classList.toggle('is-paused', !playing);
+    btn.setAttribute('aria-label', playing ? 'Pause video' : 'Play video');
+  }
+
+  projectVideos.forEach(function (video) {
+    video.muted = true; // required for autoplay in all browsers
+    const btn = video.parentElement.querySelector('.project-card__toggle');
+
+    video.addEventListener('play',  function () { setToggleState(video, true); });
+    video.addEventListener('pause', function () { setToggleState(video, false); });
+    // Hide the video only if the LAST source fails too (a missing .webm alone is fine —
+    // the browser just falls back to the .mp4).
+    const sources = video.querySelectorAll('source');
+    if (sources.length) {
+      sources[sources.length - 1].addEventListener('error', function () {
+        video.classList.add('is-missing');
+      });
+    }
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        loadVideo(video);
+        if (video.paused) {
+          video.dataset.userPaused = '';
+          video.play().catch(function () {});
+        } else {
+          video.dataset.userPaused = 'true';
+          video.pause();
+        }
+      });
+    }
+    setToggleState(video, false);
+  });
+
+  if (projectVideos.length && 'IntersectionObserver' in window) {
+    const videoObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          loadVideo(video);
+          if (!reduceMotion && !video.dataset.userPaused) {
+            video.play().catch(function () {});
+          }
+        } else if (!video.paused) {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.35, rootMargin: '200px 0px' });
+
+    projectVideos.forEach(function (v) { videoObserver.observe(v); });
+  } else {
+    projectVideos.forEach(function (v) {
+      loadVideo(v);
+      if (!reduceMotion) v.play().catch(function () {});
+    });
+  }
+
   /* ── Scroll-reveal (fade-in) ──────────────────────────────
    * Subtle fade/slide-in for section headers, cards, and the
    * about/contact panels as they enter the viewport. Reveals

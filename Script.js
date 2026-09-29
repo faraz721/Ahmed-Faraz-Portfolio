@@ -1,6 +1,7 @@
 /**
  * Script.js
  * Smooth typing / deleting effect that cycles through role titles.
+ * Project image slideshow (one per card, configurable image counts).
  */
 
 (function () {
