@@ -83,6 +83,21 @@
     setToggleState(video, false);
   });
 
+  /* Preload every project video in the background right after the page
+   * has finished loading, so by the time a visitor reaches Projects the
+   * videos are already downloaded (files are small, ~300 KB each). */
+  function preloadAllVideos () {
+    projectVideos.forEach(function (v) {
+      v.preload = 'auto';
+      loadVideo(v);
+    });
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(preloadAllVideos, 300);
+  } else {
+    window.addEventListener('load', function () { setTimeout(preloadAllVideos, 300); });
+  }
+
   if (projectVideos.length && 'IntersectionObserver' in window) {
     const videoObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
