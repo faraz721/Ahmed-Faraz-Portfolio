@@ -10,6 +10,8 @@
 
   --card-bg: #ffffff;
   --border-color: #ececef;
+  --card-line: rgba(20, 22, 26, 0.18);
+  --card-line-hover: rgba(20, 22, 26, 0.34);
   --track-color: #ececef;
   --navbar-bg: rgba(255, 255, 255, 0.55);
   --navbar-bg-scrolled: rgba(255, 255, 255, 0.82);
@@ -35,6 +37,8 @@ html[data-theme='dark'] {
 
   --card-bg: #16181d;
   --border-color: #26282f;
+  --card-line: rgba(255, 255, 255, 0.16);
+  --card-line-hover: rgba(255, 255, 255, 0.32);
   --track-color: #24262c;
   --navbar-bg: rgba(11, 12, 15, 0.55);
   --navbar-bg-scrolled: rgba(11, 12, 15, 0.85);
@@ -69,6 +73,34 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Thin orange scrollbar (set on both html and body, since either can be
+   the scrolling element here) */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  html, body {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: var(--radius-pill);
+  }
+}
+
 html {
   scroll-behavior: smooth;
   /* Keeps anchored sections clear of the fixed navbar */
@@ -77,6 +109,23 @@ html {
 
 body {
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Added to <html> by Nav.js only while the theme is switching, so every
+   colour fades smoothly instead of snapping. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease,
+    fill 0.45s ease,
+    stroke 0.45s ease,
+    box-shadow 0.45s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease !important;
 }
 
 img, video { max-width: 100%; }
@@ -172,6 +221,21 @@ svg { display: block; max-width: 100%; }
   opacity: 0.9;
 }
 
+/* Very subtle ring pulse on the desktop "Hire Me" button, once every ~5s */
+@keyframes cta-pulse {
+  0%, 72%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+  73% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+  100% { box-shadow: 0 0 0 11px rgba(255, 107, 53, 0); }
+}
+
+.navbar__link--desktop-cta {
+  animation: cta-pulse 5s ease-out 2s infinite;
+}
+
+.navbar__link--desktop-cta:hover {
+  animation: none;
+}
+
 /* Animated pill background behind each nav link on hover (desktop only —
    mobile menu items use their own stacked/bordered hover treatment). */
 @media (min-width: 901px) {
@@ -194,6 +258,16 @@ svg { display: block; max-width: 100%; }
   }
 
   .navbar__link:not(.navbar__link--cta):hover::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Current section — pill stays, text turns accent */
+  .navbar__link.is-active:not(.navbar__link--cta) {
+    color: var(--accent);
+  }
+
+  .navbar__link.is-active:not(.navbar__link--cta)::before {
     opacity: 1;
     transform: scale(1);
   }
@@ -343,6 +417,11 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   .navbar__link {
     padding: 0.9rem 6vw;
     border-top: 1px solid var(--border-color);
+  }
+
+  .navbar__link.is-active:not(.navbar__link--cta) {
+    color: var(--accent);
+    background: var(--accent-soft);
   }
 }
 
@@ -704,7 +783,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 .project-card {
   position: relative;
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--card-line);
   border-radius: 20px;
   padding: 0;
   display: flex;
@@ -715,8 +794,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 
 .project-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 40px var(--shadow-color);
-  border-color: transparent;
+  border-color: var(--card-line-hover);
 }
 
 /* Full-width video banner — fixed 16:9 ratio on every breakpoint */
@@ -823,6 +901,33 @@ html[data-theme='dark'] .project-card__tag {
   color: var(--ink-soft);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+.project-card__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.project-card__features li {
+  position: relative;
+  padding-left: 1.05rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.project-card__features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .project-card__tech {
@@ -985,82 +1090,87 @@ html[data-theme='dark'] .project-card__tag {
 }
 
 /* ── Skills ────────────────────────────────────────────── */
-.skills__note {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
-  margin-top: -0.6rem;
-  margin-bottom: 2.6rem;
-}
-
 .skills__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2.4rem 3rem;
+  gap: 1.4rem;
 }
 
+/* Each group is a card with the same thin visible line as the project cards */
 .skill-group {
   min-width: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--card-line);
+  border-radius: 20px;
+  padding: 1.5rem 1.6rem 1.7rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.skill-group:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-line-hover);
 }
 
 .skill-group__title {
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--ink);
   margin-bottom: 1.1rem;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid var(--border-color);
 }
 
-.skill-item + .skill-item {
-  margin-top: 1rem;
-}
-
-.skill-item__row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 0.45rem;
-  gap: 1rem;
-}
-
-.skill-item__name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.skill-item__value {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--accent);
+.skill-group__title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
   flex-shrink: 0;
 }
 
-.skill-item__track {
-  width: 100%;
-  height: 7px;
-  border-radius: var(--radius-pill);
-  background: var(--track-color);
-  overflow: hidden;
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
-.skill-item__fill {
-  height: 100%;
-  width: 0%;
-  max-width: 100%;
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.95rem;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--card-line);
   border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.skill-tag:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+/* Core skills — listed first and highlighted */
+.skill-tag--core {
   background: var(--accent);
-  transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.skills__grid.is-visible .skill-item__fill {
-  width: var(--fill);
+  color: #ffffff;
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
 @media (max-width: 700px) {
   .skills__grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.25rem;
+  }
+
+  .skill-group {
+    padding: 1.3rem 1.25rem 1.45rem;
   }
 }
 
@@ -1349,7 +1459,7 @@ html[data-theme='dark'] .project-card__tag {
     text-align: center;
   }
 
-  .skill-item__row {
+  .skill-group {
     text-align: left;
   }
 
@@ -1430,7 +1540,8 @@ html[data-theme='dark'] .project-card__tag {
   .hero__eyebrow::before { animation: none; }
   .btn,
   .theme-toggle,
-  .skill-item__fill { transition: none; }
+  .skill-group,
+  .skill-tag { transition: none; }
   .navbar,
   .navbar__menu,
   .navbar__toggle-bar,
@@ -1440,13 +1551,15 @@ html[data-theme='dark'] .project-card__tag {
   .navbar__link::before {
     transition: none;
   }
-  .skills__grid.is-visible .skill-item__fill { width: var(--fill); }
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
   }
   .hero__image-ring {
+    animation: none;
+  }
+  .navbar__link--desktop-cta {
     animation: none;
   }
   .navbar,

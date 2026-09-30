@@ -3,7 +3,8 @@
  * Fixed glass navbar behaviour:
  *  - deepens the glass effect slightly once the page is scrolled
  *  - opens/closes the mobile menu
- *  - toggles light/dark theme and remembers the choice
+ *  - toggles light/dark theme (with a smooth colour fade) and remembers the choice
+ *  - highlights the nav link of the section currently on screen
  */
 
 (function () {
@@ -50,8 +51,21 @@
 
   updateToggleLabel();
 
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let themeTimer;
+
   if (themeToggle) {
     themeToggle.addEventListener('click', function () {
+      // Briefly enable the CSS colour-fade, then remove it again so it
+      // doesn't interfere with normal hover/scroll transitions.
+      if (!reduceMotion) {
+        root.classList.add('theme-transition');
+        clearTimeout(themeTimer);
+        themeTimer = setTimeout(function () {
+          root.classList.remove('theme-transition');
+        }, 550);
+      }
+
       const isDark = root.getAttribute('data-theme') === 'dark';
 
       if (isDark) {
@@ -63,6 +77,45 @@
       }
 
       updateToggleLabel();
+    });
+  }
+
+  /* ── Active section highlight ─────────────────────────── */
+  // Whichever section crosses the middle of the screen gets its nav link
+  // marked as active. "skills" has no link of its own, so it keeps About lit.
+  const navLinks = Array.from(navbar.querySelectorAll('.navbar__link[href^="#"]'));
+  const sectionToLink = {
+    hero: '#hero',
+    services: '#services',
+    projects: '#projects',
+    about: '#about',
+    skills: '#about',
+    contact: '#contact'
+  };
+
+  function setActive (sectionId) {
+    const target = sectionToLink[sectionId];
+    navLinks.forEach(function (link) {
+      const on = link.getAttribute('href') === target;
+      link.classList.toggle('is-active', on);
+      if (on) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    const spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+    Object.keys(sectionToLink).forEach(function (id) {
+      const section = document.getElementById(id);
+      if (section) spy.observe(section);
     });
   }
 }());

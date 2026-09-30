@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const ROLES = ['AI Engineer', 'Python Developer', 'Software Engineer', 'Full-Stack Developer'];
+  const ROLES = ['AI Engineer', 'Python Developer', 'Software Engineer'];
 
   const el = document.getElementById('typed-text');
 
