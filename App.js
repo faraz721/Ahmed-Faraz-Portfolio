@@ -121,28 +121,73 @@
     });
   }
 
-  /* ── Scroll-reveal (fade-in) ──────────────────────────────
-   * Subtle fade/slide-in for section headers, cards, and the
-   * about/contact panels as they enter the viewport. Reveals
-   * once per element (no repeated fade-out/fade-in on re-scroll)
-   * to avoid flicker and keep it performant.
+  /* ── Scroll-reveal ────────────────────────────────────────
+   * Elements fade in while sliding from the bottom, left or right each
+   * time they enter the viewport. Elements that appear at the same moment
+   * come in one after another (staggered). When an element leaves the
+   * screen it is reset, so the animation plays again on the next visit
+   * (scrolling back, or clicking the section link again).
    */
+  function prepare (selector, pickDirection) {
+    document.querySelectorAll(selector).forEach(function (el, i) {
+      el.classList.add('reveal');
+      const dir = pickDirection ? pickDirection(i) : null;
+      if (dir) el.classList.add('reveal--' + dir);
+    });
+  }
+
+  prepare('.services__grid .service-card', function (i) { return ['left', null, 'right'][i % 3]; });
+  prepare('.projects__grid .project-card', function (i) { return i % 2 === 0 ? 'left' : 'right'; });
+  prepare('.about__image-wrap', function () { return 'left'; });
+  prepare('.about__content', function () { return 'right'; });
+  prepare('.skill-group', function (i) { return i % 2 === 0 ? 'left' : 'right'; });
+  prepare('.contact__intro', function () { return 'left'; });
+  prepare('.contact__form', function () { return 'right'; });
+
   const revealEls = document.querySelectorAll('.reveal');
+  const STAGGER = 110;   // ms between elements that appear together
+  const DURATION = 1000; // ms, matches the CSS transition
+  const SHOW_AT = 0.12;  // fraction of the element that must be visible
+  const revealTimers = new WeakMap();
+
+  function showEl (el, delay) {
+    if (el.classList.contains('is-visible')) return;
+    clearTimeout(revealTimers.get(el));
+    el.classList.remove('reveal-done');
+    el.style.setProperty('--reveal-delay', delay + 'ms');
+    el.classList.add('is-visible');
+    revealTimers.set(el, setTimeout(function () {
+      el.classList.add('reveal-done');
+      el.style.removeProperty('--reveal-delay');
+    }, delay + DURATION + 100));
+  }
+
+  function hideEl (el) {
+    if (!el.classList.contains('is-visible')) return;
+    clearTimeout(revealTimers.get(el));
+    el.classList.remove('is-visible', 'reveal-done');
+    el.style.removeProperty('--reveal-delay');
+  }
 
   if (revealEls.length) {
-    if ('IntersectionObserver' in window) {
+    if ('IntersectionObserver' in window && !reduceMotion) {
       const revealObserver = new IntersectionObserver(function (entries) {
+        let n = 0;
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
+          if (!entry.isIntersecting) {
+            hideEl(entry.target);
+          } else if (entry.intersectionRatio >= SHOW_AT) {
+            if (!entry.target.classList.contains('is-visible')) {
+              showEl(entry.target, Math.min(n, 5) * STAGGER);
+              n++;
+            }
           }
         });
-      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      }, { threshold: [0, SHOW_AT], rootMargin: '0px 0px -60px 0px' });
 
       revealEls.forEach(function (el) { revealObserver.observe(el); });
     } else {
-      // No IntersectionObserver support — just show everything.
+      // No IntersectionObserver (or reduced motion) — just show everything.
       revealEls.forEach(function (el) { el.classList.add('is-visible'); });
     }
   }

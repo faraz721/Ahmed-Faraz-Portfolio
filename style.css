@@ -6,7 +6,6 @@
   --ink-soft: #6b7078;
   --accent: #ff6b35;
   --accent-soft: #ffe4d6;
-  --dot-color: rgba(20, 22, 26, 0.28);
 
   --card-bg: #ffffff;
   --border-color: #ececef;
@@ -33,7 +32,6 @@ html[data-theme='dark'] {
   --ink-soft: #9a9ea7;
   --accent: #ff7a47;
   --accent-soft: rgba(255, 122, 71, 0.16);
-  --dot-color: rgba(255, 255, 255, 0.30);
 
   --card-bg: #16181d;
   --border-color: #26282f;
@@ -111,22 +109,24 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Added to <html> by Nav.js only while the theme is switching, so every
-   colour fades smoothly instead of snapping. */
-html.theme-transition,
-html.theme-transition *,
-html.theme-transition *::before,
-html.theme-transition *::after {
-  transition:
-    background-color 0.45s ease,
-    color 0.45s ease,
-    border-color 0.45s ease,
-    fill 0.45s ease,
-    stroke 0.45s ease,
-    box-shadow 0.45s ease,
-    opacity 0.3s ease,
-    transform 0.3s ease !important;
+/* Added to <html> by Nav.js for a single frame while the theme switches,
+   so the whole page changes instantly instead of fading piece by piece. */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
 }
+
+/* ...except the toggle button itself, which keeps its sun/moon animation */
+html.theme-switching .theme-toggle {
+  transition: border-color 0.2s ease, transform 0.2s ease !important;
+}
+
+html.theme-switching .theme-toggle__icon {
+  transition: opacity 0.3s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
 
 img, video { max-width: 100%; }
 
@@ -305,11 +305,15 @@ svg { display: block; max-width: 100%; }
   transform: translateY(-1px);
 }
 
+.theme-toggle:active {
+  transform: scale(0.9);
+}
+
 .theme-toggle__icon {
   position: absolute;
   width: 17px;
   height: 17px;
-  transition: opacity 0.2s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .theme-toggle__icon--sun {
@@ -319,12 +323,12 @@ svg { display: block; max-width: 100%; }
 
 .theme-toggle__icon--moon {
   opacity: 0;
-  transform: scale(0.6) rotate(-40deg);
+  transform: scale(0.4) rotate(-90deg);
 }
 
 html[data-theme='dark'] .theme-toggle__icon--sun {
   opacity: 0;
-  transform: scale(0.6) rotate(40deg);
+  transform: scale(0.4) rotate(90deg);
 }
 
 html[data-theme='dark'] .theme-toggle__icon--moon {
@@ -423,16 +427,6 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
     color: var(--accent);
     background: var(--accent-soft);
   }
-}
-
-/* ── Particle canvas ───────────────────────────────────── */
-#particle-canvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
 }
 
 /* ── Hero layout ───────────────────────────────────────── */
@@ -661,16 +655,49 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 }
 
 /* ── Scroll reveal ─────────────────────────────────────── */
+/* Elements fade in while sliding from the bottom, left or right, every
+   time they scroll into view. App.js assigns the direction, staggers
+   elements that appear together (via --reveal-delay), and switches to
+   .reveal-done once the animation has played so card hover effects stay
+   quick. Elements are reset when they leave the screen, so the animation
+   plays again on the next visit. */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translate3d(0, 38px, 0);
   will-change: opacity, transform;
+}
+
+.reveal--left  { transform: translate3d(-64px, 0, 0); }
+.reveal--right { transform: translate3d(64px, 0, 0); }
+
+/* "html" in the selector makes this win over each card's own transition */
+html .reveal {
+  transition:
+    opacity 0.8s ease var(--reveal-delay, 0s),
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+}
+
+/* Animation finished: quick transitions again (hover lift, shadows, etc.) */
+html .reveal.reveal-done {
+  will-change: auto;
+  transition:
+    opacity 0.3s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* On narrow screens everything simply rises from the bottom */
+@media (max-width: 900px) {
+  .reveal--left,
+  .reveal--right {
+    transform: translate3d(0, 32px, 0);
+  }
 }
 
 /* ── Section shells ────────────────────────────────────── */
@@ -729,6 +756,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border: 3px solid var(--card-line);
   gap: 0.9rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -783,7 +811,7 @@ html[data-theme='dark'] .theme-toggle__icon--moon {
 .project-card {
   position: relative;
   background: var(--card-bg);
-  border: 1px solid var(--card-line);
+  border: 3px solid var(--card-line);
   border-radius: 20px;
   padding: 0;
   display: flex;
@@ -962,7 +990,7 @@ html[data-theme='dark'] .project-card__tag {
 }
 
 @media (max-width: 700px) {
-  .projects__grid {
+  .s__grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
@@ -1033,6 +1061,10 @@ html[data-theme='dark'] .project-card__tag {
   letter-spacing: -0.01em;
 }
 
+.about__title--mobile {
+  display: none;
+}
+
 .about__text {
   color: var(--ink-soft);
   font-size: 1rem;
@@ -1080,6 +1112,13 @@ html[data-theme='dark'] .project-card__tag {
     grid-template-columns: 1fr;
     text-align: center;
   }
+  /* Small screens: heading first, then photo, then the details */
+  .about__title--mobile {
+    display: block;
+  }
+  .about__content .about__title {
+    display: none;
+  }
   .about__content {
     align-items: center;
   }
@@ -1090,87 +1129,60 @@ html[data-theme='dark'] .project-card__tag {
 }
 
 /* ── Skills ────────────────────────────────────────────── */
+/* Plain list: a heading per group, skills listed in one neutral colour */
 .skills__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-color);
 }
 
-/* Each group is a card with the same thin visible line as the project cards */
 .skill-group {
-  min-width: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--card-line);
-  border-radius: 20px;
-  padding: 1.5rem 1.6rem 1.7rem;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.skill-group:hover {
-  transform: translateY(-3px);
-  border-color: var(--card-line-hover);
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 0.6rem 2rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
 }
 
 .skill-group__title {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   font-size: 1rem;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 1.1rem;
 }
 
-.skill-group__title::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
+.skill-group__icon {
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
+  color: var(--ink-soft);
 }
 
-.skill-tags {
+.skill-list {
+  list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.3rem 0;
 }
 
-.skill-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.45rem 0.95rem;
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--card-line);
-  border-radius: var(--radius-pill);
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: left;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+.skill-list li {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
 }
 
-.skill-tag:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-}
-
-/* Core skills — listed first and highlighted */
-.skill-tag--core {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-  font-weight: 600;
+.skill-list li:not(:last-child)::after {
+  content: '\00b7';
+  margin: 0 0.7rem;
+  opacity: 0.6;
 }
 
 @media (max-width: 700px) {
-  .skills__grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
   .skill-group {
-    padding: 1.3rem 1.25rem 1.45rem;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 }
 
@@ -1180,6 +1192,11 @@ html[data-theme='dark'] .project-card__tag {
    are hardcoded (not theme tokens) for that reason. Responsive behavior
    (grid → stacked columns, full-width button, etc.) is unchanged from
    before — only visual styling was touched. */
+.contact__head {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
 .contact__card {
   background: #1a1c1e;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -1459,9 +1476,6 @@ html[data-theme='dark'] .project-card__tag {
     text-align: center;
   }
 
-  .skill-group {
-    text-align: left;
-  }
 
   /* Contact social links: left-aligned vertical column on small screens */
   .contact__links {
@@ -1540,8 +1554,9 @@ html[data-theme='dark'] .project-card__tag {
   .hero__eyebrow::before { animation: none; }
   .btn,
   .theme-toggle,
-  .skill-group,
-  .skill-tag { transition: none; }
+  .theme-toggle__icon { transition: none; }
+  html.theme-switching .theme-toggle,
+  html.theme-switching .theme-toggle__icon { transition: none !important; }
   .navbar,
   .navbar__menu,
   .navbar__toggle-bar,
@@ -1556,6 +1571,7 @@ html[data-theme='dark'] .project-card__tag {
     transform: none;
     transition: none;
   }
+  html .reveal { transition: none; }
   .hero__image-ring {
     animation: none;
   }

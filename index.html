@@ -48,9 +48,6 @@
     </div>
   </nav>
 
-  <!-- Particle background canvas -->
-  <canvas id="particle-canvas"></canvas>
-
   <section class="hero" id="hero">
     <div class="hero__inner">
 
@@ -369,6 +366,9 @@
   <section class="about" id="about">
     <div class="about__inner">
 
+      <!-- Shown only on small screens, so the heading sits above the photo -->
+      <h2 class="about__title about__title--mobile reveal">About Me</h2>
+
       <div class="about__image-wrap reveal">
         <div class="about__image-glow"></div>
         <img src="Assets/images/profile.png" alt="Ahmed Faraz Malik" class="about__image" />
@@ -415,75 +415,106 @@
       <div class="skills__grid" id="skillsGrid">
 
         <div class="skill-group">
-          <h3 class="skill-group__title">AI &amp; LLM</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">LLM APIs (Gemini, Groq)</span>
-            <span class="skill-tag skill-tag--core">RAG</span>
-            <span class="skill-tag skill-tag--core">Prompt Engineering</span>
-            <span class="skill-tag">Embeddings</span>
-            <span class="skill-tag">FAISS</span>
-            <span class="skill-tag">Generative AI</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"></rect><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"></path></svg>
+            AI &amp; LLM
+          </h3>
+          <ul class="skill-list">
+            <li>LLM APIs</li>
+            <li>RAG</li>
+            <li>Prompt Engineering</li>
+            <li>Embeddings</li>
+            <li>FAISS</li>
+            <li>Generative AI</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">Backend</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">Python</span>
-            <span class="skill-tag skill-tag--core">Flask</span>
-            <span class="skill-tag">REST APIs</span>
-            <span class="skill-tag">FastAPI</span>
-            <span class="skill-tag">Node.js</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="7" rx="2"></rect><rect x="3" y="14" width="18" height="7" rx="2"></rect><path d="M7 6.5h.01M7 17.5h.01"></path></svg>
+            Backend
+          </h3>
+          <ul class="skill-list">
+            <li>Python</li>
+            <li>Flask</li>
+            <li>REST APIs</li>
+            <li>FastAPI</li>
+            <li>Node.js</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">Frontend</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">JavaScript</span>
-            <span class="skill-tag skill-tag--core">HTML &amp; CSS</span>
-            <span class="skill-tag">React</span>
-            <span class="skill-tag">Streamlit</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 9h20"></path></svg>
+            Frontend
+          </h3>
+          <ul class="skill-list">
+            <li>JavaScript</li>
+            <li>HTML &amp; CSS</li>
+            <li>React</li>
+            <li>Streamlit</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">Databases</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">PostgreSQL</span>
-            <span class="skill-tag skill-tag--core">SQL</span>
-            <span class="skill-tag">MySQL</span>
-            <span class="skill-tag">SQLite</span>
-            <span class="skill-tag">MongoDB</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"></ellipse><path d="M5 6v6c0 1.66 3.13 3 7 3s7-1.34 7-3V6"></path><path d="M5 12v6c0 1.66 3.13 3 7 3s7-1.34 7-3v-6"></path></svg>
+            Databases
+          </h3>
+          <ul class="skill-list">
+            <li>PostgreSQL</li>
+            <li>SQL</li>
+            <li>MySQL</li>
+            <li>SQLite</li>
+            <li>MongoDB</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">Data</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">NumPy</span>
-            <span class="skill-tag skill-tag--core">Pandas</span>
-            <span class="skill-tag">Matplotlib</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20v-6M12 20V4M18 20v-9"></path><path d="M3 20h18"></path></svg>
+            Data Handling
+          </h3>
+          <ul class="skill-list">
+            <li>NumPy</li>
+            <li>Pandas</li>
+            <li>Matplotlib</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">SEO &amp; AEO</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">Technical SEO</span>
-            <span class="skill-tag skill-tag--core">Content Structure</span>
-            <span class="skill-tag">Answer Engine Optimization</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+            Blockchain Basics
+          </h3>
+          <ul class="skill-list">
+            <li>Solidity</li>
+            <li>Smart Contracts</li>
+          </ul>
         </div>
 
         <div class="skill-group">
-          <h3 class="skill-group__title">Tools &amp; Deployment</h3>
-          <div class="skill-tags">
-            <span class="skill-tag skill-tag--core">Git</span>
-            <span class="skill-tag skill-tag--core">GitHub</span>
-            <span class="skill-tag">Render</span>
-            <span class="skill-tag">Vercel</span>
-          </div>
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            SEO &amp; AEO
+          </h3>
+          <ul class="skill-list">
+            <li>Technical SEO</li>
+            <li>Content Structure</li>
+            <li>Answer Engine Optimization</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <h3 class="skill-group__title">
+            <svg class="skill-group__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"></path></svg>
+            Tools &amp; Deployment
+          </h3>
+          <ul class="skill-list">
+            <li>Git</li>
+            <li>GitHub</li>
+            <li>DevOps</li>
+          </ul>
         </div>
 
       </div>
@@ -491,6 +522,12 @@
   </section>
 
   <section class="contact" id="contact">
+    <div class="contact__head">
+      <div class="section-header reveal">
+        <h2 class="section-header__title">Contact Me</h2>
+      </div>
+    </div>
+
     <div class="contact__card">
     <div class="contact__inner">
 
@@ -574,7 +611,6 @@
 
   <!-- EmailJS SDK — required for the contact form to send email from a static GitHub Pages site -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="particles.js"></script>
   <script src="Script.js"></script>
   <script src="Nav.js"></script>
   <script src="App.js"></script>

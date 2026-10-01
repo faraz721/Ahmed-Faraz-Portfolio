@@ -3,8 +3,9 @@
  * Fixed glass navbar behaviour:
  *  - deepens the glass effect slightly once the page is scrolled
  *  - opens/closes the mobile menu
- *  - toggles light/dark theme (with a smooth colour fade) and remembers the choice
+ *  - toggles light/dark theme and remembers the choice
  *  - highlights the nav link of the section currently on screen
+ *  - scrolls smoothly to a section when any #link is clicked
  */
 
 (function () {
@@ -51,22 +52,12 @@
 
   updateToggleLabel();
 
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let themeTimer;
-
   if (themeToggle) {
     themeToggle.addEventListener('click', function () {
-      // Briefly enable the CSS colour-fade, then remove it again so it
-      // doesn't interfere with normal hover/scroll transitions.
-      if (!reduceMotion) {
-        root.classList.add('theme-transition');
-        clearTimeout(themeTimer);
-        themeTimer = setTimeout(function () {
-          root.classList.remove('theme-transition');
-        }, 550);
-      }
-
       const isDark = root.getAttribute('data-theme') === 'dark';
+
+      // Turn transitions off for this one switch so the change is instant.
+      root.classList.add('theme-switching');
 
       if (isDark) {
         root.removeAttribute('data-theme');
@@ -77,8 +68,35 @@
       }
 
       updateToggleLabel();
+
+      void root.offsetWidth; // apply the new colours right now, with transitions off
+      requestAnimationFrame(function () {
+        root.classList.remove('theme-switching');
+      });
     });
   }
+
+  /* ── Smooth in-page scrolling ─────────────────────────── */
+  // Any link like <a href="#projects"> glides to its section instead of jumping.
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.addEventListener('click', function (e) {
+    const link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!link) return;
+
+    const hash = link.getAttribute('href');
+    if (!hash || hash.length < 2) return;
+
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    e.preventDefault();
+    target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+
+    if (window.history && window.history.pushState) {
+      window.history.pushState(null, '', hash);
+    }
+  });
 
   /* ── Active section highlight ─────────────────────────── */
   // Whichever section crosses the middle of the screen gets its nav link
